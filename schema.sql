@@ -1,5 +1,12 @@
 CREATE TABLE pacientes (
-    
+    id serial primary key,
+  nome varchar(100) not null,
+  data_de_nascimento varchar (100) not null,
+  contato  varchar (100) not null,
+  endereço varchar (255) not null,
+  email varchar (255) not null,
+  status varchar (20) default 'ativo',
+  convenio varchar(100) not null
 );
 
 CREATE TABLE medicos (
@@ -33,6 +40,7 @@ CREATE TABLE agendamentos (
 );
 
 CREATE TABLE consultas (
+<<<<<<< HEAD
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     id_agendamento UUID NOT NULL,
     data_inicio DATETIME NOT NULL,
@@ -40,6 +48,14 @@ CREATE TABLE consultas (
     queixa_principal TEXT NOT NULL,
     observacoes_medico TEXT,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  
+=======
+  id integer,
+id_medico integer,
+id_paciente integer,
+data_consulta timestamp,
+hora_consulta timestamp,
+status varchar (50)  
+>>>>>>> dbc350f (codigos pacientes,consultas e convenios)
 );
 
 CREATE TABLE prescricoes (
@@ -71,5 +87,8 @@ CREATE TABLE medicamento (
 );
 
 CREATE TABLE convenios (
-    
+ id serial primary key,
+    nome varchar (100) not null,
+    codigo_de_operadora varchar (20),
+    procedimentos varchar (100)null   
 );
