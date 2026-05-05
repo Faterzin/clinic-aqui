@@ -69,11 +69,9 @@ CREATE TABLE prescricoes (
 );
 
 CREATE TABLE medicamentos (
-    -- Enum para categoria
-CREATE TYPE categoria_medicamento AS ENUM ('CONTROLADO', 'COMUM');
 
--- Tabela Medicamento (item prescrito)
-CREATE TABLE medicamento (
+    CREATE TYPE categoria_medicamento AS ENUM ('CONTROLADO', 'COMUM');
+    
     id SERIAL PRIMARY KEY,
     nome_comercial VARCHAR(100) NOT NULL,
     principio_ativo VARCHAR(100) NOT NULL,
@@ -81,9 +79,7 @@ CREATE TABLE medicamento (
 
     CONSTRAINT fk_prescricao
         FOREIGN KEY (id_prescricao)
-        REFERENCES prescricao(id_prescricao)
-);
-    
+        REFERENCES prescricao(id_prescricao)  
 );
 
 CREATE TABLE convenios (
