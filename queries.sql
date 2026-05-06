@@ -33,6 +33,22 @@ WHERE a.inicio_em BETWEEN NOW() AND NOW() + INTERVAL '7 days'
   AND a.status = 'AGENDADA'
 ORDER BY a.inicio_em ASC;
 
+--3. Quais pacientes nunca realizaram nenhuma consulta na clínica? Mostre o nome completo e a data de cadastro
+SELECT nome, data_consulta
+FROM pacientes 
+LEFT JOIN consultas  ON consultas = pacientes
+WHERE id_paciente IS NULL;
+
+--4. Qual o medicamento mais prescrito nos últimos 90 dias? Mostre o nome do medicamento e a contagem de prescrições.
+SELECT m.nome_comercial AS medicamento,
+       COUNT(*) AS total_prescricao
+FROM prescricoes p  
+JOIN medicamentos m  ON  m.id = p.id_medicamento
+WHERE p.criada_em >= p.criada_em - INTERVAL '90 DAY'
+GROUP BY m.nome_comercial
+ORDER BY total_prescricao DESC
+LIMIT 2;
+
 /* ================(QUESTÃO 5)====================
 Quais médicos tiveram mais de 20% de taxa de ausência nos últimos 30 dias? 
 Considere ausência agendamentos com status "faltou" ou "cancelado" pelo paciente. 
@@ -125,3 +141,4 @@ GROUP BY
 HAVING 
     COUNT(DISTINCT c.id_medico) > 1;
     select * from pacientes
+
