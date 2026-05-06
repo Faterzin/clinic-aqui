@@ -32,3 +32,96 @@ inner JOIN especialidades e ON m.id_especialidade = e.id
 WHERE a.inicio_em BETWEEN NOW() AND NOW() + INTERVAL '7 days'
   AND a.status = 'AGENDADA'
 ORDER BY a.inicio_em ASC;
+
+/* ================(QUESTÃO 5)====================
+Quais médicos tiveram mais de 20% de taxa de ausência nos últimos 30 dias? 
+Considere ausência agendamentos com status "faltou" ou "cancelado" pelo paciente. 
+Mostre o nome do médico e o percentual calculado.
+
+Desenvolvimento de uma consulta SQL com o objetivo de identificar médicos que apresentam taxa de ausência superior a 20% no período dos últimos 30 dias.
+
+A consulta realiza:
+
+* Junção entre as tabelas de agendamentos (ou consultas) e médicos;
+* Filtro de registros dos últimos 30 dias;
+* Identificação de ausências com status "faltou" ou "cancelado";
+* Cálculo do percentual de ausência com base no total de atendimentos;
+* Aplicação de cláusula HAVING para selecionar apenas médicos com taxa superior a 20%.
+
+O resultado apresenta o nome do médico e o percentual de ausências calculado.
+*/
+
+-- NOME: Giovanna Menezes
+
+SELECT 
+    m.nome,
+    ROUND(
+        100.0 * SUM(
+            CASE 
+                WHEN c.status IN ('faltou', 'cancelado') THEN 1 
+                ELSE 0 
+            END
+        ) / COUNT(*),
+    2) AS percentual_ausencia
+
+FROM agendamentos c
+
+JOIN medicos m 
+    ON c.id_medico = m.id_medico
+
+WHERE 
+    c.data >= CURRENT_DATE - INTERVAL '30 days'
+
+GROUP BY 
+    m.nome
+
+HAVING 
+    SUM(
+        CASE 
+            WHEN c.status IN ('faltou', 'cancelado') THEN 1 
+            ELSE 0 
+        END
+    ) * 1.0 / COUNT(*) > 0.2
+
+ORDER BY 
+    percentual_ausencia DESC;
+
+select * from agendamentos
+
+
+
+/*=================================================================================
+Quais pacientes foram atendidos por mais de um médico diferente nos últimos 6 meses?
+ Mostre o nome do paciente e a contagem de médicos distintos.
+
+Desenvolvimento de uma consulta SQL com o objetivo de identificar pacientes que foram atendidos por mais de um médico 
+distinto no período dos últimos 6 meses.
+
+A consulta realiza:
+
+* Junção entre as tabelas de agendamentos e pacientes;
+* Filtro de registros com status "realizada";
+* Restrição temporal considerando os últimos 6 meses;
+* Contagem de médicos distintos por paciente utilizando COUNT(DISTINCT);
+* Aplicação de cláusula HAVING para selecionar apenas pacientes com mais de um médico.
+
+O resultado apresenta o nome do paciente e a quantidade de médicos distintos que o atenderam.
+
+ ==================================================================================*/
+
+ -- NOME: Giovanna Menezes
+
+SELECT 
+    p.nome,
+    COUNT(DISTINCT c.id_medico) AS qtd_medicos
+FROM agendamentos c
+JOIN paciente p 
+    ON c.id_paciente = p.id_paciente
+WHERE 
+    c.data >= CURRENT_DATE - INTERVAL '6 months'
+    AND c.status = 'realizada'
+GROUP BY 
+    p.nome
+HAVING 
+    COUNT(DISTINCT c.id_medico) > 1;
+    select * from pacientes
