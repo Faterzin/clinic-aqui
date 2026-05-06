@@ -142,3 +142,32 @@ HAVING
     COUNT(DISTINCT c.id_medico) > 1;
     select * from pacientes
 
+-- 7. Qual a duração média das consultas por especialidade? Mostre apenas especialidades com pelo menos 5 consultas realizadas. Ordene da maior duração média para a menor.
+
+SELECT
+    e.nome AS especialidade,
+    AVG(a.fim_em - a.inicio_em) AS duracao_media
+FROM consultas c
+JOIN agendamentos a ON c.id_agendamento = a.id
+JOIN medicos m ON c.id_medico = m.id
+JOIN especialidades e ON m.id_especialidade = e.id
+WHERE c.status = 'REALIZADA'
+  AND a.fim_em IS NOT NULL
+GROUP BY e.nome
+HAVING COUNT(*) >= 5
+ORDER BY duracao_media DESC;
+
+-- 8. Quais pacientes receberam prescrição de medicamento controlado nos últimos 30 dias? Mostre o nome do paciente, o medicamento e o médico que prescreveu.
+ 
+SELECT
+    p.nome AS paciente,
+    med.nome_comercial AS medicamento,
+    m.nome AS medico
+FROM prescricoes pr
+JOIN consultas c ON pr.id_consulta = c.id
+JOIN pacientes p ON c.id_paciente = p.id
+JOIN medicos m ON c.id_medico = m.id
+JOIN medicamentos med ON pr.id_medicamento = med.id
+WHERE pr.criada_em >= NOW() - INTERVAL '30 days'
+  AND med.categoria = 'CONTROLADO'
+ORDER BY pr.criada_em DESC;
