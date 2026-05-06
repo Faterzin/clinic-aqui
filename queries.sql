@@ -171,3 +171,32 @@ JOIN medicamentos med ON pr.id_medicamento = med.id
 WHERE pr.criada_em >= NOW() - INTERVAL '30 days'
   AND med.categoria = 'CONTROLADO'
 ORDER BY pr.criada_em DESC;
+
+-- pergunta 9
+select
+ c.nome as nome_convenio,
+ count (p.id) as total_pacientes
+from convenios c
+join pacientes p on p.id_convenio = 
+c.id
+where p.status = p.status
+group by c.id, c.nome 
+order by total_pacientes desc
+limit 1;
+
+-- perguta 10 (erro)
+select 
+p.id,
+p.nome,
+count(c.id) as total_consultas,
+max(c.data_consulta) as ultima_consulta
+from pacientes p
+join consultas c on c.id_paciente = p.id
+group by p.id, p.nome
+having
+ count(c.id) > 3
+ and max (c.data_consulta) < current_date - interval '90 days'
+
+
+SELECT MAX(c.data_consulta)
+FROM consultas c;
