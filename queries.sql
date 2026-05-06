@@ -200,3 +200,35 @@ having
 
 SELECT MAX(c.data_consulta)
 FROM consultas c;
+
+-- Pergunta 11: Qual médico prescreveu a maior variedade de medicamentos diferentes? Mostre o nome e o número de medicamentos distintos prescritos.
+SELECT
+    m.nome AS medico,
+    COUNT(DISTINCT pr.id_medicamento) AS medicamentos_distintos
+FROM prescricoes pr
+JOIN consultas c ON pr.id_consulta = c.id
+JOIN medicos m ON c.id_medico = m.id
+GROUP BY m.id, m.nome
+ORDER BY medicamentos_distintos DESC
+-- Não tenho certeza se tá correta, vou testar amanhã com vcs
+
+-- pergunta 12: Liste o histórico completo de consultas de um paciente específico do seu seed — data, médico, especialidade, queixa principal e se houve prescrição. Ordene da consulta mais recente para a mais antiga.
+SELECT
+    c.data_consulta,
+    m.nome AS medico,
+    e.nome AS especialidade,
+    c.observacoes AS queixa_principal,
+    CASE
+        WHEN EXISTS (
+            SELECT 1
+            FROM prescricoes pr
+            WHERE pr.id_consulta = c.id
+        ) THEN 'SIM'
+        ELSE 'NÃO'
+    END AS teve_prescricao
+FROM consultas c
+JOIN medicos m ON c.id_medico = m.id
+JOIN especialidades e ON m.id_especialidade = e.id
+WHERE c.id_paciente = 1
+ORDER BY c.data_consulta DESC;
+-- Mesma coisa da 11, não tenho certeza se tá correta, vou testar amanhã com vcs
