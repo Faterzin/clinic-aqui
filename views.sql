@@ -1,3 +1,10 @@
+/*
+View: agenda_do_dia
+Descrição: Exibe a agenda de consultas agendadas para o dia atual.
+Inclui nome do paciente, médico, especialidade e hora marcada.
+Filtra apenas agendamentos com status 'AGENDADA' e data atual.
+Ordena por hora de início.
+*/
 CREATE OR REPLACE VIEW agenda_do_dia AS
 SELECT
     p.nome AS nome_paciente,
@@ -17,6 +24,15 @@ WHERE DATE(a.inicio_em) = CURRENT_DATE
     AND a.status = 'AGENDADA'
 ORDER BY a.inicio_em;
 
+
+/*
+View: historico_paciente
+Descrição: Fornece um histórico resumido de pacientes ativos.
+Inclui ID e nome do paciente, total de consultas realizadas,
+data e médico da última consulta, e se possui prescrição ativa (últimos 30 dias).
+Usa CTEs para calcular métricas: ultima_consulta, total_consultas e prescricao_ativa.
+Ordena por nome do paciente.
+*/
 
 CREATE OR REPLACE VIEW historico_paciente AS
 WITH ultima_consulta AS (
