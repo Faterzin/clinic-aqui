@@ -16,3 +16,56 @@ INNER JOIN especialidades e
 WHERE DATE(a.inicio_em) = CURRENT_DATE
     AND a.status = 'AGENDADA'
 ORDER BY a.inicio_em;
+
+
+CREATE OR REPLACE VIEW historico_paciente AS
+WITH ultima_consulta AS (
+    SELECT
+        c.id_paciente,
+        c.data_consulta,
+        m.nome AS medico_ultimo_atendimento,
+        ROW_NUMBER() OVER (
+            PARTITION BY c.id_paciente
+            ORDER BY c.data_consulta DESC
+        ) AS ordem
+    FROM consultas c
+    INNER JOIN medicos m
+        ON m.id = c.id_medico
+    WHERE c.status = 'REALIZADA'
+),
+total_consultas AS (
+    SELECT
+        id_paciente,
+        COUNT(*) AS quantidade_consultas
+    FROM consultas
+    WHERE status = 'REALIZADA'
+    GROUP BY id_paciente
+),
+prescricao_ativa AS (
+    SELECT DISTINCT
+        c.id_paciente
+    FROM consultas c
+    INNER JOIN prescricoes pr
+        ON pr.id_consulta = c.id
+    WHERE pr.criada_em >= CURRENT_DATE - INTERVAL '30 days'
+)
+SELECT
+    p.id AS id_paciente,
+    p.nome AS nome_paciente,
+    COALESCE(tc.quantidade_consultas, 0) AS quantidade_consultas_realizadas,
+    uc.data_consulta AS data_ultima_consulta,
+    uc.medico_ultimo_atendimento,
+    CASE
+        WHEN pa.id_paciente IS NOT NULL THEN TRUE
+        ELSE FALSE
+    END AS possui_prescricao_ativa
+FROM pacientes p
+LEFT JOIN total_consultas tc
+    ON tc.id_paciente = p.id
+LEFT JOIN ultima_consulta uc
+    ON uc.id_paciente = p.id
+    AND uc.ordem = 1
+LEFT JOIN prescricao_ativa pa
+    ON pa.id_paciente = p.id
+WHERE p.status = 'ATIVO'
+ORDER BY p.nome;
