@@ -210,7 +210,7 @@ JOIN consultas c ON pr.id_consulta = c.id
 JOIN medicos m ON c.id_medico = m.id
 GROUP BY m.id, m.nome
 ORDER BY medicamentos_distintos DESC
--- Não tenho certeza se tá correta, vou testar amanhã com vcs
+
 
 -- pergunta 12: Liste o histórico completo de consultas de um paciente específico do seu seed — data, médico, especialidade, queixa principal e se houve prescrição. Ordene da consulta mais recente para a mais antiga.
 SELECT
@@ -231,4 +231,3 @@ JOIN medicos m ON c.id_medico = m.id
 JOIN especialidades e ON m.id_especialidade = e.id
 WHERE c.id_paciente = 1
 ORDER BY c.data_consulta DESC;
--- Mesma coisa da 11, não tenho certeza se tá correta, vou testar amanhã com vcs
