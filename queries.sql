@@ -49,25 +49,9 @@ GROUP BY m.nome_comercial
 ORDER BY total_prescricao DESC
 LIMIT 2;
 
-/* ================(QUESTÃO 5)====================
-Quais médicos tiveram mais de 20% de taxa de ausência nos últimos 30 dias? 
-Considere ausência agendamentos com status "faltou" ou "cancelado" pelo paciente. 
-Mostre o nome do médico e o percentual calculado.
-
-Desenvolvimento de uma consulta SQL com o objetivo de identificar médicos que apresentam taxa de ausência superior a 20% no período dos últimos 30 dias.
-
-A consulta realiza:
-
-* Junção entre as tabelas de agendamentos (ou consultas) e médicos;
-* Filtro de registros dos últimos 30 dias;
-* Identificação de ausências com status "faltou" ou "cancelado";
-* Cálculo do percentual de ausência com base no total de atendimentos;
-* Aplicação de cláusula HAVING para selecionar apenas médicos com taxa superior a 20%.
-
-O resultado apresenta o nome do médico e o percentual de ausências calculado.
-*/
-
--- NOME: Giovanna Menezes
+/*5. Quais médicos tiveram mais de 20% de taxa de ausência nos últimos 30 dias? Considere ausência agendamentos 
+com status "faltou" ou "cancelado" pelo paciente.
+ Mostre o nome do médico e o percentual calculado.*/
 
 SELECT 
     m.nome,
@@ -104,28 +88,8 @@ ORDER BY
 
 select * from agendamentos
 
-
-
-/*=================================================================================
-Quais pacientes foram atendidos por mais de um médico diferente nos últimos 6 meses?
- Mostre o nome do paciente e a contagem de médicos distintos.
-
-Desenvolvimento de uma consulta SQL com o objetivo de identificar pacientes que foram atendidos por mais de um médico 
-distinto no período dos últimos 6 meses.
-
-A consulta realiza:
-
-* Junção entre as tabelas de agendamentos e pacientes;
-* Filtro de registros com status "realizada";
-* Restrição temporal considerando os últimos 6 meses;
-* Contagem de médicos distintos por paciente utilizando COUNT(DISTINCT);
-* Aplicação de cláusula HAVING para selecionar apenas pacientes com mais de um médico.
-
-O resultado apresenta o nome do paciente e a quantidade de médicos distintos que o atenderam.
-
- ==================================================================================*/
-
- -- NOME: Giovanna Menezes
+/*6. Quais pacientes foram atendidos por mais de um médico diferente nos últimos 6 meses?
+ Mostre o nome do paciente e a contagem de médicos distintos.*/
 
 SELECT 
     p.nome,
@@ -142,7 +106,8 @@ HAVING
     COUNT(DISTINCT c.id_medico) > 1;
     select * from pacientes
 
--- 7. Qual a duração média das consultas por especialidade? Mostre apenas especialidades com pelo menos 5 consultas realizadas. Ordene da maior duração média para a menor.
+/*7. Qual a duração média das consultas por especialidade? Mostre apenas especialidades com pelo menos 5 consultas realizadas. 
+Ordene da maior duração média para a menor.*/
 
 SELECT
     e.nome AS especialidade,
@@ -157,7 +122,8 @@ GROUP BY e.nome
 HAVING COUNT(*) >= 5
 ORDER BY duracao_media DESC;
 
--- 8. Quais pacientes receberam prescrição de medicamento controlado nos últimos 30 dias? Mostre o nome do paciente, o medicamento e o médico que prescreveu.
+/*8. Quais pacientes receberam prescrição de medicamento controlado nos últimos 30 dias? 
+Mostre o nome do paciente, o medicamento e o médico que prescreveu.*/
  
 SELECT
     p.nome AS paciente,
@@ -172,7 +138,7 @@ WHERE pr.criada_em >= NOW() - INTERVAL '30 days'
   AND med.categoria = 'CONTROLADO'
 ORDER BY pr.criada_em DESC;
 
--- pergunta 9
+--9. Qual o convênio com maior número de pacientes ativos? Mostre o nome do convênio e a contagem. 
 select
  c.nome as nome_convenio,
  count (p.id) as total_pacientes
@@ -184,7 +150,8 @@ group by c.id, c.nome
 order by total_pacientes desc
 limit 1;
 
--- perguta 10 (erro)
+/*10. Quais pacientes têm mais de 3 consultas realizadas mas não têm nenhuma consulta nos últimos 90 dias? 
+O time de relacionamento quer acionar essa base para retorno. */
 select 
 p.id,
 p.nome,
@@ -201,7 +168,9 @@ having
 SELECT MAX(c.data_consulta)
 FROM consultas c;
 
--- Pergunta 11: Qual médico prescreveu a maior variedade de medicamentos diferentes? Mostre o nome e o número de medicamentos distintos prescritos.
+/*Pergunta 11: Qual médico prescreveu a maior variedade de medicamentos diferentes? 
+Mostre o nome e o número de medicamentos distintos prescritos.*/
+
 SELECT
     m.nome AS medico,
     COUNT(DISTINCT pr.id_medicamento) AS medicamentos_distintos
@@ -210,9 +179,11 @@ JOIN consultas c ON pr.id_consulta = c.id
 JOIN medicos m ON c.id_medico = m.id
 GROUP BY m.id, m.nome
 ORDER BY medicamentos_distintos DESC
--- Não tenho certeza se tá correta, vou testar amanhã com vcs
 
--- pergunta 12: Liste o histórico completo de consultas de um paciente específico do seu seed — data, médico, especialidade, queixa principal e se houve prescrição. Ordene da consulta mais recente para a mais antiga.
+/*12. Liste o histórico completo de consultas de um paciente específico do 
+seu seed — data, médico, especialidade, queixa principal e se houve prescrição. 
+Ordene da consulta mais recente para a mais antiga.*/
+
 SELECT
     c.data_consulta,
     m.nome AS medico,
@@ -231,4 +202,3 @@ JOIN medicos m ON c.id_medico = m.id
 JOIN especialidades e ON m.id_especialidade = e.id
 WHERE c.id_paciente = 1
 ORDER BY c.data_consulta DESC;
--- Mesma coisa da 11, não tenho certeza se tá correta, vou testar amanhã com vcs
